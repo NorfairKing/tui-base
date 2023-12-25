@@ -4,11 +4,12 @@ module Tui where
 
 import System.Directory
 
-import Brick.AttrMap
-import Brick.Main
-import Brick.Types
-import Brick.Widgets.Core
-import Graphics.Vty.Input.Events
+import Brick.AttrMap             (attrMap)
+import Brick.Main                (App(..), continueWithoutRedraw, defaultMain, halt, showFirstCursor)
+import Brick.Types               (BrickEvent(VtyEvent), EventM, Widget)
+import Brick.Widgets.Core        ()
+import Graphics.Vty.Attributes   (defAttr)
+import Graphics.Vty.Input.Events (Event(EvKey), Key(KChar))
 
 tui :: IO ()
 tui = do
@@ -27,11 +28,11 @@ data ResourceName =
 tuiApp :: App TuiState e ResourceName
 tuiApp =
   App
-    { appDraw = drawTui
+    { appDraw         = drawTui
     , appChooseCursor = showFirstCursor
-    , appHandleEvent = handleTuiEvent
-    , appStartEvent = pure
-    , appAttrMap = const $ attrMap mempty []
+    , appHandleEvent  = handleTuiEvent
+    , appStartEvent   = pure ()
+    , appAttrMap      = const $ attrMap defAttr []
     }
 
 buildInitialState :: IO TuiState
@@ -40,11 +41,11 @@ buildInitialState = pure TuiState
 drawTui :: TuiState -> [Widget ResourceName]
 drawTui _ts = []
 
-handleTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
-handleTuiEvent s e =
+handleTuiEvent :: BrickEvent n e -> EventM n s ()
+handleTuiEvent e =
   case e of
     VtyEvent vtye ->
       case vtye of
-        EvKey (KChar 'q') [] -> halt s
-        _ -> continue s
-    _ -> continue s
+        EvKey (KChar 'q') [] -> halt
+        _ -> continueWithoutRedraw
+    _ -> continueWithoutRedraw

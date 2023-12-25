@@ -8,9 +8,10 @@ library:
   dependencies:
   - base >= 4.7 && < 5
   - brick
-  - vty
-  - directory
   - cursor
+  - directory
+  - mtl
+  - vty
 
 executables:
   tui:

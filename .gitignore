@@ -1,3 +1,5 @@
 .stack-work/
 tui.cabal
 *~
+dist-newstyle/
+stack*.yaml.lock
